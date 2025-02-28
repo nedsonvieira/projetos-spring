@@ -1,9 +1,9 @@
-package br.com.nlw.events.repository;
+package br.com.nlw.eventos.repository;
 
-import br.com.nlw.events.dto.ItemRankingInscricao;
-import br.com.nlw.events.model.Evento;
-import br.com.nlw.events.model.Inscricao;
-import br.com.nlw.events.model.Usuario;
+import br.com.nlw.eventos.dto.ItemRankingInscricao;
+import br.com.nlw.eventos.model.Evento;
+import br.com.nlw.eventos.model.Inscricao;
+import br.com.nlw.eventos.model.Usuario;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

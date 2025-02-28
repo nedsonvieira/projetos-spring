@@ -1,6 +1,6 @@
-package br.com.nlw.events.repository;
+package br.com.nlw.eventos.repository;
 
-import br.com.nlw.events.model.Evento;
+import br.com.nlw.eventos.model.Evento;
 import org.springframework.data.repository.CrudRepository;
 
 /*

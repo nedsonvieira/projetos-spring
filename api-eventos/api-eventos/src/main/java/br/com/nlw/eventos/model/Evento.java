@@ -1,4 +1,4 @@
-package br.com.nlw.events.model;
+package br.com.nlw.eventos.model;
 
 import jakarta.persistence.*;
 

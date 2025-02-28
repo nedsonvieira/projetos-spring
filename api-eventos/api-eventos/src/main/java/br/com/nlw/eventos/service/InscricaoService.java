@@ -1,17 +1,17 @@
-package br.com.nlw.events.service;
+package br.com.nlw.eventos.service;
 
-import br.com.nlw.events.dto.RankingInscricoesPorUsuario;
-import br.com.nlw.events.dto.ItemRankingInscricao;
-import br.com.nlw.events.dto.InscricaoResponse;
-import br.com.nlw.events.exception.EventoNotFoundException;
-import br.com.nlw.events.exception.InscricaoConflictException;
-import br.com.nlw.events.exception.UsuarioIndicadorNotFoundException;
-import br.com.nlw.events.model.Evento;
-import br.com.nlw.events.model.Inscricao;
-import br.com.nlw.events.model.Usuario;
-import br.com.nlw.events.repository.EventoRepository;
-import br.com.nlw.events.repository.InscricaoRepository;
-import br.com.nlw.events.repository.UsuarioRepository;
+import br.com.nlw.eventos.dto.RankingInscricoesPorUsuario;
+import br.com.nlw.eventos.dto.ItemRankingInscricao;
+import br.com.nlw.eventos.dto.InscricaoResponse;
+import br.com.nlw.eventos.exception.EventoNotFoundException;
+import br.com.nlw.eventos.exception.InscricaoConflictException;
+import br.com.nlw.eventos.exception.UsuarioIndicadorNotFoundException;
+import br.com.nlw.eventos.model.Evento;
+import br.com.nlw.eventos.model.Inscricao;
+import br.com.nlw.eventos.model.Usuario;
+import br.com.nlw.eventos.repository.EventoRepository;
+import br.com.nlw.eventos.repository.InscricaoRepository;
+import br.com.nlw.eventos.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

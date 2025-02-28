@@ -1,7 +1,7 @@
-package br.com.nlw.events.service;
+package br.com.nlw.eventos.service;
 
-import br.com.nlw.events.model.Evento;
-import br.com.nlw.events.repository.EventoRepository;
+import br.com.nlw.eventos.model.Evento;
+import br.com.nlw.eventos.repository.EventoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
-package br.com.nlw.events.controller;
+package br.com.nlw.eventos.controller;
 
-import br.com.nlw.events.model.Evento;
-import br.com.nlw.events.service.EventoService;
+import br.com.nlw.eventos.model.Evento;
+import br.com.nlw.eventos.service.EventoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

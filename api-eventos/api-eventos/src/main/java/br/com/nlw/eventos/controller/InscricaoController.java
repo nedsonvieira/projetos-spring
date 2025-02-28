@@ -1,12 +1,12 @@
-package br.com.nlw.events.controller;
+package br.com.nlw.eventos.controller;
 
-import br.com.nlw.events.dto.MensagemErro;
-import br.com.nlw.events.dto.InscricaoResponse;
-import br.com.nlw.events.exception.EventoNotFoundException;
-import br.com.nlw.events.exception.InscricaoConflictException;
-import br.com.nlw.events.exception.UsuarioIndicadorNotFoundException;
-import br.com.nlw.events.model.Usuario;
-import br.com.nlw.events.service.InscricaoService;
+import br.com.nlw.eventos.dto.MensagemErro;
+import br.com.nlw.eventos.dto.InscricaoResponse;
+import br.com.nlw.eventos.exception.EventoNotFoundException;
+import br.com.nlw.eventos.exception.InscricaoConflictException;
+import br.com.nlw.eventos.exception.UsuarioIndicadorNotFoundException;
+import br.com.nlw.eventos.model.Usuario;
+import br.com.nlw.eventos.service.InscricaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
