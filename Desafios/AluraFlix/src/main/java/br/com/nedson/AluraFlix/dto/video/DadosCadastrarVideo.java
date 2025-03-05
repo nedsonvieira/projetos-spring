@@ -1,4 +1,4 @@
-package br.com.nedson.AluraFlix.dto;
+package br.com.nedson.AluraFlix.dto.video;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -16,7 +16,8 @@ public record DadosCadastrarVideo(
         @NotBlank(message = "O URL é obrigatório!")
         @URL(message = "O formato do URL é inválido!")
         @Size(max = 100, message = "O URL deve ter no máximo 100 caracteres")
-        String url
-) {
+        String url,
 
+        Long categoriaId
+) {
 }

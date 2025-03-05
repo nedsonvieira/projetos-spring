@@ -1,12 +1,12 @@
 package br.com.nedson.AluraFlix.controller;
 
-import br.com.nedson.AluraFlix.dto.DadosAtualizarVideo;
-import br.com.nedson.AluraFlix.dto.DadosBuscarVideo;
-import br.com.nedson.AluraFlix.dto.DadosCadastrarVideo;
-import br.com.nedson.AluraFlix.dto.DadosDetalharVideo;
+import br.com.nedson.AluraFlix.dto.video.DadosAtualizarVideo;
+import br.com.nedson.AluraFlix.dto.video.DadosBuscarVideo;
+import br.com.nedson.AluraFlix.dto.video.DadosCadastrarVideo;
+import br.com.nedson.AluraFlix.dto.video.DadosDetalharVideo;
 import br.com.nedson.AluraFlix.model.Video;
-import br.com.nedson.AluraFlix.repository.VideoRepository;
-import jakarta.persistence.EntityNotFoundException;
+import br.com.nedson.AluraFlix.service.VideoService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -16,67 +16,53 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/videos")
+@SecurityRequirement(name = "bearer-key")
 public class VideoController {
 
-    private final VideoRepository repository;
+    private final VideoService videoService;
 
     @PostMapping
     @Transactional
-    public ResponseEntity<?> cadastrarVideo(@RequestBody @Valid DadosCadastrarVideo dados,
-                                    UriComponentsBuilder uriBuilder){
-        var video = new Video(dados);
-        repository.save(video);
-
-        var uri = uriBuilder.path("videos/{id}").buildAndExpand(video.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new DadosDetalharVideo(video));
+    public ResponseEntity<DadosDetalharVideo> cadastrar(@RequestBody @Valid DadosCadastrarVideo dados){
+        var video = videoService.cadastrar(dados);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new DadosDetalharVideo(video));
     }
 
-//    @PostMapping("/lista")
-//    @Transactional
-//    public void postAllVideo(@RequestBody @Valid List<DadosCadastrarVideo> listaDados,
-//                                       UriComponentsBuilder uriBuilder){
-//        repositorio.saveAll(new Video().converterLista(listaDados));
-//    }
-
     @GetMapping
-    public ResponseEntity<Page<DadosBuscarVideo>> listarTodos(@PageableDefault(size = 5) Pageable paginacao){
-        var page = repository.findAllByAtivoTrue(paginacao)
-                .map(DadosBuscarVideo::new);
-        return ResponseEntity.ok(page);
+    public ResponseEntity<Page<DadosBuscarVideo>> listar(@PageableDefault(size = 5) Pageable paginacao){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                videoService.listar(paginacao));
+    }
+
+    @GetMapping("/agrupado")
+    public ResponseEntity<List<DadosBuscarVideo>> listarAgrupandoPorCategoria(){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                videoService.listarAgrupandoPorCategoria());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> listarById(@PathVariable Long id){
-        var video = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalharVideo(video));
+    public ResponseEntity<DadosDetalharVideo> listarById(@PathVariable Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new DadosDetalharVideo(videoService.listarById(id)));
     }
 
     @PutMapping
     @Transactional
-    public ResponseEntity<?> atualizar(@RequestBody @Valid DadosAtualizarVideo dados){
-        var video = repository.getReferenceById(dados.id());
-        video.atualizar(dados);
-
-        return ResponseEntity.ok(new DadosDetalharVideo(video));
+    public ResponseEntity<DadosDetalharVideo> atualizar(@RequestBody @Valid DadosAtualizarVideo dados){
+        return ResponseEntity.status(HttpStatus.OK).body(
+                new DadosDetalharVideo(videoService.atualizar(dados)));
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<String> deletar(@PathVariable Long id){
-
-        if (repository.findAtivoById(id) == null){
-            throw new EntityNotFoundException();
-        } else {
-            var video = repository.getReferenceById(id);
-            video.inativar();
-            return ResponseEntity.status(HttpStatus.OK).body("Vídeo deletado com sucesso!");
-
-        }
+        videoService.deletar(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Vídeo deletado com sucesso!");
     }
 }

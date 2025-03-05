@@ -1,14 +1,13 @@
 package br.com.nedson.AluraFlix.model;
 
-import br.com.nedson.AluraFlix.dto.DadosAtualizarVideo;
-import br.com.nedson.AluraFlix.dto.DadosCadastrarVideo;
+import br.com.nedson.AluraFlix.dto.video.DadosAtualizarVideo;
+import br.com.nedson.AluraFlix.dto.video.DadosCadastrarVideo;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.*;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -28,11 +27,16 @@ public class Video {
 
     private Boolean ativo;
 
-    public Video(DadosCadastrarVideo dados){
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "categoria_id", nullable = false)
+    private Categoria categoria;
+
+    public Video(DadosCadastrarVideo dados, Categoria categoria){
         this.titulo = dados.titulo();
         this.descricao = dados.descricao();
         this.url = dados.url();
         this.ativo = true;
+        this.categoria = categoria;
     }
 
 //    public List<Video> converterLista(List<DadosCadastrarVideo> listaDados) {
@@ -41,14 +45,19 @@ public class Video {
 //                .toList();
 //    }
 
-    public void atualizar(DadosAtualizarVideo dados){
-        this.titulo = dados.titulo();
-        this.descricao = dados.descricao();
-        this.url = dados.url();
+    public void atualizar(@Valid DadosAtualizarVideo dados){
+        if (!dados.validarTitulo()){
+            this.titulo = dados.titulo();
+        }
+        if (!dados.validarDescricao()){
+            this.descricao = dados.descricao();
+        }
+        if (!dados.validarUrl()){
+            this.url = dados.url();
+        }
     }
 
     public void inativar(){
         this.ativo = false;
     }
-
 }
