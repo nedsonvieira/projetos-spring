@@ -20,6 +20,7 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -85,6 +86,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Cadastrar categoria com sucesso")
+    @WithMockUser
     void cadastrar_cenario1() throws Exception {
         mockMvc.perform(post("/categorias")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -98,6 +100,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Cadastrar categoria com dados inválidos")
+    @WithMockUser
     void cadastrar_cenario2() throws Exception {
         var dadosInvalidos = new DadosCadastrarCategoria("", "111222");
 
@@ -113,6 +116,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Listar categorias paginadas")
+    @WithMockUser
     void listar() throws Exception {
         categoriaRepository.save(categoria);
 
@@ -125,6 +129,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Buscar categoria por ID")
+    @WithMockUser
     void listarById_cenario1() throws Exception {
         categoria = categoriaRepository.save(categoria);
 
@@ -139,6 +144,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Buscar categoria inexistente")
+    @WithMockUser
     void listarById_cenario2() throws Exception {
         mockMvc.perform(get("/categorias/{id}", 999L))
                 .andExpect(status().isNotFound())
@@ -149,6 +155,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Atualizar categoria")
+    @WithMockUser
     void atualizar_cenario1() throws Exception {
         categoria = categoriaRepository.save(categoria);
         var dadosAtualizar = new DadosAtualizarCategoria(categoria.getId(), "Nova Categoria", "#AAAAAA");
@@ -169,6 +176,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Atualizar categoria inexistente")
+    @WithMockUser
     void atualizar_cenario2() throws Exception {
         var dadosAtualizar = new DadosAtualizarCategoria(999L, "Nova Categoria", "#AAAAAA");
 
@@ -181,6 +189,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Deletar categoria")
+    @WithMockUser
     void deletar_cenario1() throws Exception {
         categoriaRepository.save(categoria);
 
@@ -193,6 +202,7 @@ public class CategoriaControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Deletar categoria inexistente")
+    @WithMockUser
     void deletar_cenario2() throws Exception {
         mockMvc.perform(delete("/categorias/{id}", 999L))
                 .andExpect(status().isNotFound())

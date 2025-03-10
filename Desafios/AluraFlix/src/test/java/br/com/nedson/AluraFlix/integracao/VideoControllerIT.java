@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.*;
 
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -108,6 +109,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Cadastrar vídeo com sucesso")
+    @WithMockUser
     void cadastrar_cenario1() throws Exception {
         mockMvc.perform(post("/videos")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -123,6 +125,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Cadastrar vídeo com categoria informada")
+    @WithMockUser
     void cadastrar_cenario2() throws Exception {
         var novosDadosCategoria = new DadosCadastrarCategoria("Documentário", "#FFFFFF");
         var categoria = new Categoria(novosDadosCategoria);
@@ -149,6 +152,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Cadastrar vídeo com categoria não informada e categoria Livre não salva")
+    @WithMockUser
     void cadastrar_cenario3() throws Exception {
         categoriaRepository.deleteAll();
 
@@ -163,6 +167,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Cadastrar vídeo com dados inválidos")
+    @WithMockUser
     void cadastrar_cenario4() throws Exception {
         var dadosInvalidos = new DadosCadastrarVideo("", "", "url-invalido", null);
 
@@ -181,6 +186,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Listar vídeos paginados")
+    @WithMockUser
     void listar() throws Exception {
         videoRepository.save(video);
 
@@ -194,6 +200,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Buscar vídeo por ID")
+    @WithMockUser
     void listarById_cenario1() throws Exception {
         video = videoRepository.save(video);
 
@@ -210,6 +217,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Buscar vídeo inexistente")
+    @WithMockUser
     void listarById_cenario2() throws Exception {
         mockMvc.perform(get("/videos/{id}", 999L))
                 .andExpect(status().isNotFound())
@@ -220,6 +228,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Atualizar vídeo")
+    @WithMockUser
     void atualizar_cenario1() throws Exception {
         video = videoRepository.save(video);
         var dadosAtualizar = new DadosAtualizarVideo(video.getId(), "Novo Vídeo", "Descrição do vídeo novo", "http://teste.com/novo-video");
@@ -239,6 +248,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Atualizar vídeo inexistente")
+    @WithMockUser
     void atualizar_cenario2() throws Exception {
         var dadosAtualizar = new DadosAtualizarVideo(
                 999L,
@@ -255,6 +265,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Deletar vídeo")
+    @WithMockUser
     void deletar_cenario1() throws Exception {
         videoRepository.save(video);
 
@@ -267,6 +278,7 @@ public class VideoControllerIT {
 
     @Test
     @DisplayName("Teste de integração: Deletar vídeo inexistente")
+    @WithMockUser
     void deletar_cenario2() throws Exception {
         mockMvc.perform(delete("/videos/{id}", 999L))
                 .andExpect(status().isNotFound())

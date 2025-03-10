@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -63,6 +64,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria cadastrar uma categoria com sucesso e devolver status 201 e a categoria cadastrada")
+    @WithMockUser
     void cadastrar_cenario1() throws Exception {
         var dados = new DadosCadastrarCategoria("Categoria Teste", "#FFFFFF");
         var categoria = new Categoria(dados);
@@ -83,6 +85,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria devolver erro 400 ao tentar cadastrar uma categoria com dados inválidos")
+    @WithMockUser
     void cadastrar_cenario2() throws Exception {
         var dados = new DadosCadastrarCategoria("", "");
 
@@ -94,6 +97,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria listar categorias ativas e devolver status 200")
+    @WithMockUser
     void listar_cenario1() throws Exception {
         var categoria = new Categoria(1L, "Categoria Livre", "#FFFFFF", true);
         var page = new PageImpl<>(List.of(categoria));
@@ -110,6 +114,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria listar os detalhes de uma categoria ao buscar por ID e devolver status 200")
+    @WithMockUser
     void listarById_cenario1() throws Exception {
         var categoria = new Categoria(1L, "Categoria Livre", "#FFFFFF", true);
 
@@ -127,6 +132,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria devolver erro 404 ao buscar uma categoria inexistente")
+    @WithMockUser
     void listarById_cenario2() throws Exception {
         when(categoriaRepository.findAtivoById(999L)).thenReturn(false);
 
@@ -137,6 +143,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria atualizar uma categoria com sucesso e devolver status 200 e os detalhes da categoria atualizada")
+    @WithMockUser
     void atualizar_cenario1() throws Exception {
         var categoria = new Categoria(1L, "Categoria Teste", "#FFFFFF", true);
         var dadosAtualizar = new DadosAtualizarCategoria(categoria.getId(), "Nova Categoria", "#AAAAAA");
@@ -158,6 +165,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria devolver erro 404 ao tentar atualizar uma categoria inexistente")
+    @WithMockUser
     void atualizar_cenario2() throws Exception {
         var dadosAtualizar = new DadosAtualizarCategoria(999L, "Nova Categoria", "#AAAAAA");
 
@@ -172,6 +180,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria deletar uma categoria com sucesso e retornar a mensagem")
+    @WithMockUser
     void deletar_cenario1() throws Exception {
         var categoria = new Categoria(1L, "Categoria Livre", "#FFFFFF", true);
 
@@ -187,6 +196,7 @@ class CategoriaControllerTest {
 
     @Test
     @DisplayName("Deveria retornar erro 404 ao tentar deletar uma categoria inexistente")
+    @WithMockUser
     void deletar_cenario2() throws Exception {
         mockMvc.perform(delete("/categorias/{id}", 999L))
                 .andExpect(status().isNotFound())

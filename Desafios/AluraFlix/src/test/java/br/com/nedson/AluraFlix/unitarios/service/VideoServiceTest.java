@@ -137,8 +137,9 @@ class VideoServiceTest {
     @DisplayName("Deveria devolver a lista com os vídeos cadastrados")
     void listar() {
         // Arrange
+        var categoria = mock(Categoria.class);
         var paginacao = PageRequest.of(0, 5);
-        var listaVideos = List.of(video);
+        var listaVideos = List.of(new Video(dadosCadastrar, categoria));
         var page = new PageImpl<>(listaVideos, paginacao, listaVideos.size());
 
         when(videoRepository.findAllByAtivoTrue(paginacao)).thenReturn(page);

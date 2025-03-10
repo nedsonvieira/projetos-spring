@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -75,6 +76,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria cadastrar um vídeo com sucesso e devolver status 201 e o vídeo cadastrado")
+    @WithMockUser
     void cadastrar_cenario1() throws Exception {
         when(videoService.cadastrar(any())).thenReturn(video);
 
@@ -91,6 +93,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria devolver erro 400 ao tentar cadastrar um vídeo com dados inválidos")
+    @WithMockUser
     void cadastrar_cenario2() throws Exception {
         var dados = new DadosCadastrarVideo("", "", "url-invalido", null);
 
@@ -102,6 +105,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria devolver status 200 e retornar a lista de vídeos")
+    @WithMockUser
     void listar() throws Exception {
         var page = new PageImpl<>(List.of(new DadosBuscarVideo(video)));
 
@@ -117,6 +121,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria devolver status 200 e listar os detalhes do vídeo buscado")
+    @WithMockUser
     void listarById_cenario1() throws Exception {
         when(videoService.listarById(id)).thenReturn(video);
 
@@ -131,6 +136,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria devolver erro 404 ao buscar um vídeo inexistente")
+    @WithMockUser
     void listarById_cenario2() throws Exception {
         doThrow(new EntityNotFoundException("Vídeo não encontrado!"))
                 .when(videoService).listarById(999L);
@@ -142,6 +148,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria atualizar um vídeo com sucesso e devolver status 200 e os detalhes do vídeo atualizado")
+    @WithMockUser
     void atualizar_cenario1() throws Exception {
         var dadosAtualizar = new DadosAtualizarVideo(id, "Novo Vídeo", "Descrição do vídeo novo", "http://teste.com/novo-video");
         video.atualizar(dadosAtualizar);
@@ -162,6 +169,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria devolver erro 404 ao tentar atualizar um vídeo inexistente")
+    @WithMockUser
     void atualizar_cenario2() throws Exception {
         var dadosAtualizar = new DadosAtualizarVideo(
                 999L,
@@ -181,6 +189,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria deletar um vídeo com sucesso e retornar status 204 e a mensagem")
+    @WithMockUser
     void deletar_cenario1() throws Exception {
 
         when(videoService.listarById(id)).thenReturn(video);
@@ -192,6 +201,7 @@ class VideoControllerTest {
 
     @Test
     @DisplayName("Deveria retornar erro 404 ao tentar deletar um vídeo inexistente")
+    @WithMockUser
     void deletar_cenario2() throws Exception {
 
         doThrow(new EntityNotFoundException("Vídeo não encontrado!"))
