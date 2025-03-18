@@ -6,6 +6,7 @@ import br.com.nedson.Controle_Orcamento.service.UsuarioService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class UsuarioController {
     @PostMapping
     public ResponseEntity<String> cadastrar(@Valid @RequestBody UsuarioCadastroDTO dto){
         usuarioService.cadastrar(dto);
-        return ResponseEntity.ok("Usuário cadastrado com sucesso!");
+        return ResponseEntity.status(HttpStatus.CREATED).body("Usuário cadastrado com sucesso!");
     }
 
     @GetMapping

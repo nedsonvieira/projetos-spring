@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
-import java.util.NoSuchElementException;
-
 @RestControllerAdvice
 public class TratadorDeErros {
 
@@ -56,6 +54,11 @@ public class TratadorDeErros {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
+    @ExceptionHandler(ValidarCadastroUsuarioExcepiton.class)
+    public ResponseEntity tratarErroUsuarioDuplicado(ValidarCadastroUsuarioExcepiton ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
     @ExceptionHandler(ValidarDataException.class)
     public ResponseEntity tratarErroRegraDeNegocio(ValidarDataException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
@@ -75,6 +78,8 @@ public class TratadorDeErros {
     public ResponseEntity tratarErroAcessoNegado() {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso negado");
     }
+
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity tratarErro500(Exception ex) {

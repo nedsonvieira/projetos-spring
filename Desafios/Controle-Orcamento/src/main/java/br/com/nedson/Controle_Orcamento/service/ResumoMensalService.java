@@ -1,10 +1,7 @@
 package br.com.nedson.Controle_Orcamento.service;
 
 import br.com.nedson.Controle_Orcamento.dto.ResumoMensalDTO;
-import br.com.nedson.Controle_Orcamento.email.EmailResumoMensal;
-import br.com.nedson.Controle_Orcamento.email.EmailSender;
 import br.com.nedson.Controle_Orcamento.model.Categoria;
-import br.com.nedson.Controle_Orcamento.model.Usuario;
 import br.com.nedson.Controle_Orcamento.repository.DespesaRepository;
 import br.com.nedson.Controle_Orcamento.repository.ReceitaRepository;
 import lombok.AllArgsConstructor;
@@ -21,24 +18,24 @@ public class ResumoMensalService {
 
     private final DespesaRepository despesaRepository;
 
-    private final EmailResumoMensal emailResumoMensal;
-
-    public ResumoMensalDTO gerarResumo(int ano, int mes, Usuario usuario) {
+    public ResumoMensalDTO gerarResumo(int ano, int mes) {
         var totalReceitas = receitaRepository.calcularTotalReceitasPorMes(ano, mes)
                 .orElse(BigDecimal.ZERO);
         var totalDespesas = despesaRepository.calcularTotalDespesasPorMes(ano, mes)
                 .orElse(BigDecimal.ZERO);
         var saldoFinal = totalReceitas.subtract(totalDespesas);
 
-        // Transformar lista de Objects em Map de Categoria e BigDecimal
-//        Map<Categoria, BigDecimal> totalGastoPorCategoria = new HashMap<>();
-//
-//        var resultados = despesaRepository.calcularTotalPorCategoria(ano, mes);
-//        for (Object[] objects : resultados) {
-//            Categoria categoria = (Categoria) objects[0];
-//            BigDecimal total = (BigDecimal) objects[1];
-//            totalGastoPorCategoria.merge(categoria, total, BigDecimal::add);
-//        }
+        /*
+ Transformar lista de Objects em Map de Categoria e BigDecimal
+        Map<Categoria, BigDecimal> totalGastoPorCategoria = new HashMap<>();
+
+        var resultados = despesaRepository.calcularTotalPorCategoria(ano, mes);
+        for (Object[] objects : resultados) {
+            Categoria categoria = (Categoria) objects[0];
+            BigDecimal total = (BigDecimal) objects[1];
+            totalGastoPorCategoria.merge(categoria, total, BigDecimal::add);
+        }
+*/
         var totalGastoPorCategoria = despesaRepository
                 .calcularTotalPorCategoria(ano, mes)
                 .stream().collect(Collectors.toMap(
@@ -47,15 +44,11 @@ public class ResumoMensalService {
                         BigDecimal::add
                 ));
 
-        var resumo = new ResumoMensalDTO(
+        return new ResumoMensalDTO(
                 totalReceitas,
                 totalDespesas,
                 saldoFinal,
                 totalGastoPorCategoria
         );
-
-        emailResumoMensal.enviar(resumo, ano, mes, usuario);
-
-        return resumo;
     }
 }

@@ -1,15 +1,12 @@
 package br.com.nedson.Controle_Orcamento.model;
 
-import br.com.nedson.Controle_Orcamento.dto.usuario.UsuarioCadastroDTO;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +16,7 @@ import java.util.List;
 @Table(name = "usuarios")
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Getter
 public class Usuario implements UserDetails {
 
@@ -39,6 +37,7 @@ public class Usuario implements UserDetails {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+        this.perfis = perfis;
     }
 
     public Boolean isAdmin() {

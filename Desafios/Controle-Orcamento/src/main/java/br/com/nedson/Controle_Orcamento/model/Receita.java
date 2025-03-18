@@ -5,18 +5,18 @@ import br.com.nedson.Controle_Orcamento.dto.receita.ReceitaCadastrarDTO;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 @Entity
 @Table(name = "receitas")
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Getter
 public class Receita {
 
@@ -35,15 +35,6 @@ public class Receita {
         this.descricao = dto.descricao();
         this.valor = dto.valor();
         this.data = dto.converteData();
-    }
-
-    private LocalDate converterParaLocalDate(String data) {
-        try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            return LocalDate.parse(data, formatter);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Data inválida: " + data);
-        }
     }
 
     public void atualizar(@Valid ReceitaAtualizarDTO dto){

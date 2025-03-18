@@ -108,6 +108,8 @@ class ReceitaControllerTest {
                 .andExpect(jsonPath("$.descricao", is(dto.descricao())))
                 .andExpect(jsonPath("$.valor", is(dto.valor().doubleValue())))
                 .andExpect(jsonPath("$.data", is(dto.data())));
+
+        verify(receitaService, times(1)).cadastrar(any(ReceitaCadastrarDTO.class));
     }
 
     @ParameterizedTest
@@ -123,6 +125,11 @@ class ReceitaControllerTest {
                         .param("descricao", descricao))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", not(empty())));
+
+        if (descricao == null) {
+            descricao = "";
+        }
+        verify(receitaService, times(1)).listarByDescricao(eq(descricao), any(Pageable.class));
     }
 
     private void mockListarDespesas(String descricao, List<ReceitaDetalharDTO> despesas) {
@@ -130,19 +137,21 @@ class ReceitaControllerTest {
         if (descricao == null) {
             descricao = "";
         }
-        when(receitaService.listarByDescricao(eq(descricao), any())).thenReturn(page);
+        when(receitaService.listarByDescricao(eq(descricao), any(Pageable.class))).thenReturn(page);
     }
 
     @Test
     @WithMockUser
     @DisplayName("Deveria devolver 200 - Ok e a lista vazia - ao buscar receitas com descrição  na requisição")
     void listarReceitasComDescricaoNaoEncontrada() throws Exception{
-        when(receitaService.listarByDescricao(eq("Aluguel"), any())).thenReturn(Page.empty());
+        when(receitaService.listarByDescricao(eq("Aluguel"), any(Pageable.class))).thenReturn(Page.empty());
 
         mvc.perform(get("/receitas")
                         .param("descricao", "Aluguel"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", is(empty())));
+
+        verify(receitaService, times(1)).listarByDescricao(anyString(), any(Pageable.class));
     }
 
     @Test
@@ -160,6 +169,8 @@ class ReceitaControllerTest {
                 .andExpect(jsonPath("$.descricao", is(dto.descricao())))
                 .andExpect(jsonPath("$.valor", is(dto.valor().doubleValue())))
                 .andExpect(jsonPath("$.data", is(dto.data())));
+
+        verify(receitaService, times(1)).listarById(anyLong());
     }
 
     @Test
@@ -168,19 +179,21 @@ class ReceitaControllerTest {
     void listarReceitasByIdNaoEncontrado() throws Exception {
         var id = 999L;
 
-        when(receitaService.listarById(id))
+        when(receitaService.listarById(anyLong()))
                 .thenThrow(new EntityNotFoundException("Receita não encontrada!"));
 
         mvc.perform(get("/receitas/{id}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Receita não encontrada")));
+
+        verify(receitaService, times(1)).listarById(anyLong());
     }
 
     @Test
     @DisplayName("Deveria devolver status 400 - Bad Request - quando id for de tipo inválido")
     @WithMockUser
     void listarReceitasByIdTipoInvalido() throws Exception {
-        when(receitaService.listarById(any(Long.class)))
+        when(receitaService.listarById(anyLong()))
                 .thenThrow(MethodArgumentTypeMismatchException.class);
 
         mvc.perform(get("/receitas/asd"))
@@ -200,25 +213,29 @@ class ReceitaControllerTest {
         mvc.perform(get("/receitas/2025/01"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", not(empty())));
+
+        verify(receitaService, times(1)).listarByAnoAndMes(anyInt(), anyInt(), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Deveria devolver status 200 - Ok e a lista vazia - quando ano e mes forem válidos e não encontrar receitas")
     @WithMockUser
     void listarReceitasByAnoEMesEDespesasNaoEncontradas() throws Exception {
-        when(receitaService.listarByAnoAndMes(eq(2025), eq(1), any()))
+        when(receitaService.listarByAnoAndMes(eq(2025), eq(1), any(Pageable.class)))
                 .thenReturn(Page.empty());
 
         mvc.perform(get("/receitas/2025/01"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", is(empty())));
+
+        verify(receitaService, times(1)).listarByAnoAndMes(anyInt(), anyInt(), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Deveria devolver status 400 - Bad Request - quando ano e mes forem inválidos")
     @WithMockUser
     void listarReceitasByAnoOuMesInvalidos() throws Exception {
-        when(receitaService.listarByAnoAndMes(anyInt(), anyInt(), any()))
+        when(receitaService.listarByAnoAndMes(anyInt(), anyInt(), any(Pageable.class)))
                 .thenThrow(MethodArgumentTypeMismatchException.class);
 
         mvc.perform(get("/receitas/asd/asd"))
@@ -243,6 +260,8 @@ class ReceitaControllerTest {
                 .andExpect(jsonPath("$.descricao", is(dtoDetalhar.descricao())))
                 .andExpect(jsonPath("$.valor", is(dtoDetalhar.valor().doubleValue())))
                 .andExpect(jsonPath("$.data", is(dtoDetalhar.data())));
+
+        verify(receitaService, times(1)).atualizar(any(ReceitaAtualizarDTO.class));
     }
 
     @Test
@@ -267,7 +286,7 @@ class ReceitaControllerTest {
         var id = 999L;
         var dtoAtualizar = new ReceitaAtualizarDTO(id, "Nova Feira", new BigDecimal("500.00"), "02/01/2025");
 
-        when(receitaService.atualizar(any()))
+        when(receitaService.atualizar(any(ReceitaAtualizarDTO.class)))
                 .thenThrow(new EntityNotFoundException("Receita não encontrada!"));
 
         mvc.perform(put("/receitas/{id}", id)
@@ -275,6 +294,8 @@ class ReceitaControllerTest {
                         .content(jsonAtualizar.write(dtoAtualizar).getJson()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Receita não encontrada")));
+
+        verify(receitaService, times(1)).atualizar(any(ReceitaAtualizarDTO.class));
     }
 
     @Test
@@ -285,6 +306,8 @@ class ReceitaControllerTest {
 
         mvc.perform(delete("/receitas/1"))
                 .andExpect(status().isNoContent());
+
+        verify(receitaService, times(1)).deletar(anyLong());
     }
 
     @Test
@@ -296,6 +319,8 @@ class ReceitaControllerTest {
 
         mvc.perform(delete("/receitas/1"))
                 .andExpect(status().isNotFound());
+
+        verify(receitaService, times(1)).deletar(anyLong());
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 @Table(name = "perfis")
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
 @Getter
 public class Perfil implements GrantedAuthority {
 

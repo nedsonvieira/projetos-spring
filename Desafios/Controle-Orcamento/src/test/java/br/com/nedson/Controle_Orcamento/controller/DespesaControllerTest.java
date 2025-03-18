@@ -110,6 +110,8 @@ class DespesaControllerTest {
                 .andExpect(jsonPath("$.valor", is(dto.valor().doubleValue())))
                 .andExpect(jsonPath("$.data", is(dto.data())))
                 .andExpect(jsonPath("$.categoria", is(dto.categoria().toString())));
+
+        verify(despesaService, times(1)).cadastrar(any(DespesaCadastrarDTO.class));
     }
 
     @ParameterizedTest
@@ -125,6 +127,11 @@ class DespesaControllerTest {
                         .param("descricao", descricao))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", not(empty())));
+
+        if (descricao == null) {
+            descricao = "";
+        }
+        verify(despesaService, times(1)).listarByDescricao(eq(descricao), any(Pageable.class));
     }
 
     private void mockListarDespesas(String descricao, List<DespesaDetalharDTO> despesas) {
@@ -139,12 +146,14 @@ class DespesaControllerTest {
     @WithMockUser
     @DisplayName("Deveria devolver 200 - Ok e a lista vazia - ao buscar despesas com descrição  na requisição")
     void listarDespesasComDescricaoNaoEncontrada() throws Exception{
-        when(despesaService.listarByDescricao(eq("Feira"), any())).thenReturn(Page.empty());
+        when(despesaService.listarByDescricao(eq("Feira"), any(Pageable.class))).thenReturn(Page.empty());
 
         mvc.perform(get("/despesas")
                         .param("descricao", "Feira"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", is(empty())));
+
+        verify(despesaService, times(1)).listarByDescricao(anyString(), any(Pageable.class));
     }
 
     @Test
@@ -163,6 +172,8 @@ class DespesaControllerTest {
                 .andExpect(jsonPath("$.valor", is(dto.valor().doubleValue())))
                 .andExpect(jsonPath("$.data", is(dto.data())))
                 .andExpect(jsonPath("$.categoria", is(dto.categoria().toString())));
+
+        verify(despesaService, times(1)).listarById(anyLong());
     }
 
     @Test
@@ -171,7 +182,7 @@ class DespesaControllerTest {
     void listarDespesasByIdNaoEncontrado() throws Exception {
         var id = 999L;
 
-        when(despesaService.listarById(id))
+        when(despesaService.listarById(anyLong()))
                 .thenThrow(new EntityNotFoundException("Despesa não encontrada!"));
 
         mvc.perform(get("/despesas/{id}", id))
@@ -183,7 +194,7 @@ class DespesaControllerTest {
     @DisplayName("Deveria devolver status 400 - Bad Request - quando id for de tipo inválido")
     @WithMockUser
     void listarDespesasByIdTipoInvalido() throws Exception {
-        when(despesaService.listarById(any(Long.class)))
+        when(despesaService.listarById(anyLong()))
                 .thenThrow(MethodArgumentTypeMismatchException.class);
 
         mvc.perform(get("/despesas/asd"))
@@ -203,6 +214,8 @@ class DespesaControllerTest {
         mvc.perform(get("/despesas/2025/01"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", not(empty())));
+
+        verify(despesaService, times(1)).listarByAnoAndMes(anyInt(), anyInt(), any(Pageable.class));
     }
 
     @Test
@@ -215,13 +228,15 @@ class DespesaControllerTest {
         mvc.perform(get("/despesas/2025/01"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", is(empty())));
+
+        verify(despesaService, times(1)).listarByAnoAndMes(anyInt(), anyInt(), any(Pageable.class));
     }
 
     @Test
     @DisplayName("Deveria devolver status 400 - Bad Request - quando ano e mes forem inválidos")
     @WithMockUser
     void listarDespesasByAnoOuMesInvalidos() throws Exception {
-        when(despesaService.listarByAnoAndMes(anyInt(), anyInt(), any()))
+        when(despesaService.listarByAnoAndMes(anyInt(), anyInt(), any(Pageable.class)))
                 .thenThrow(MethodArgumentTypeMismatchException.class);
 
         mvc.perform(get("/despesas/asd/asd"))
@@ -246,6 +261,8 @@ class DespesaControllerTest {
                 .andExpect(jsonPath("$.valor", is(dtoDetalhar.valor().doubleValue())))
                 .andExpect(jsonPath("$.data", is(dtoDetalhar.data())))
                 .andExpect(jsonPath("$.categoria", is(dtoDetalhar.categoria().toString())));
+
+        verify(despesaService, times(1)).atualizar(any(DespesaAtualizarDTO.class));
     }
 
     @Test
@@ -268,7 +285,7 @@ class DespesaControllerTest {
     void atualizarDespesasIdNaoEncontrado() throws Exception {
         var dtoAtualizar = new DespesaAtualizarDTO(999L, "Nova Feira", new BigDecimal("500.00"), "02/01/2025", Categoria.ALIMENTACAO);
 
-        when(despesaService.atualizar(any()))
+        when(despesaService.atualizar(any(DespesaAtualizarDTO.class)))
                 .thenThrow(new EntityNotFoundException("Despesa não encontrada!"));
 
         mvc.perform(put("/despesas")
@@ -276,6 +293,8 @@ class DespesaControllerTest {
                         .content(jsonAtualizar.write(dtoAtualizar).getJson()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(containsString("Despesa não encontrada")));
+
+        verify(despesaService, times(1)).atualizar(any(DespesaAtualizarDTO.class));
     }
 
     @Test
@@ -286,6 +305,8 @@ class DespesaControllerTest {
 
         mvc.perform(delete("/despesas/1"))
                 .andExpect(status().isNoContent());
+
+        verify(despesaService, times(1)).deletar(anyLong());
     }
 
     @Test
@@ -297,6 +318,8 @@ class DespesaControllerTest {
 
         mvc.perform(delete("/despesas/1"))
                 .andExpect(status().isNotFound());
+
+        verify(despesaService, times(1)).deletar(anyLong());
     }
 
     @Test

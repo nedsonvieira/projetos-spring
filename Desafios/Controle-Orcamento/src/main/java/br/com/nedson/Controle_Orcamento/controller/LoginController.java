@@ -1,15 +1,13 @@
 package br.com.nedson.Controle_Orcamento.controller;
 
 import br.com.nedson.Controle_Orcamento.dto.usuario.LoginDTO;
-import br.com.nedson.Controle_Orcamento.email.EmailResumoMensal;
-import br.com.nedson.Controle_Orcamento.model.Usuario;
 import br.com.nedson.Controle_Orcamento.infra.security.TokenService;
+import br.com.nedson.Controle_Orcamento.model.Usuario;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
