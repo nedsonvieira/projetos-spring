@@ -20,21 +20,16 @@ public class ResumoMensalController {
 
     private final EmailResumoMensal emailResumoMensal;
 
-    private ResumoMensalDTO resumo;
-
     @GetMapping("/{ano}/{mes}")
     public ResponseEntity<ResumoMensalDTO> obterResumoDoMes(@PathVariable int ano, @PathVariable int mes) {
-        resumo = resumoMensalService.gerarResumo(ano, mes);
-
-        return ResponseEntity.ok(resumo);
+        return ResponseEntity.ok(resumoMensalService.gerarResumo(ano, mes));
     }
 
-    @PostMapping("/{ano}/{mes}/enviar-email")
+    @GetMapping("/{ano}/{mes}/enviar-email")
     public ResponseEntity<String > enviarEmail(@PathVariable int ano, @PathVariable int mes) {
         var usuario = (Usuario) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var resumo = resumoMensalService.gerarResumo(ano, mes);
 
-        emailResumoMensal.enviar(resumo, ano, mes, usuario);
-
-        return ResponseEntity.ok("Email enviado!");
+        return ResponseEntity.ok(emailResumoMensal.enviar(resumo, ano, mes, usuario));
     }
 }
