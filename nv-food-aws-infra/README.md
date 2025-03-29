@@ -21,11 +21,11 @@ O projeto define e provisiona os seguintes recursos na AWS:
 
 ```
 ├── src/main/java/com/myorg
-│   ├── NvFoodAwsInfraApp.java  # Aplicação principal CDK
-│   ├── NvFoodVpcStack.java    # Definição da VPC
-│   ├── NvFoodClusterStack.java # Configuração do ECS Cluster
-│   ├── NvFoodRdsPedidosStack.java    # Configuração do banco de dados MySQL
-│   ├── NvFoodServicePedidosStack.java # Serviço de pedidos no Fargate
+│   ├── NvFoodAwsInfraApp.java            # Aplicação principal CDK
+│   ├── NvFoodVpcStack.java               # Definição da VPC
+│   ├── NvFoodClusterStack.java           # Configuração do ECS Cluster
+│   ├── NvFoodRdsPedidosStack.java        # Configuração do banco de dados MySQL
+│   ├── NvFoodServicePedidosStack.java    # Serviço de pedidos no Fargate
 │
 ├── cdk.json            # Configuração do CDK
 ├── pom.xml             # Dependências Maven
