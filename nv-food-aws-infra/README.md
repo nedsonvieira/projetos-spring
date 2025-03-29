@@ -30,11 +30,3 @@ O projeto define e provisiona os seguintes recursos na AWS:
 ├── cdk.json            # Configuração do CDK
 ├── pom.xml             # Dependências Maven
 ```
-
-## 📌 Contribuição
-
-Sinta-se à vontade para abrir issues e pull requests para melhorias e correções. 🚀
-
-## 📝 Licença
-
-Este projeto está licenciado sob a **MIT License..**
