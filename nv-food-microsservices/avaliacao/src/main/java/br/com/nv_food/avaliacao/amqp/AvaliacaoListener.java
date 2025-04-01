@@ -10,6 +10,11 @@ public class AvaliacaoListener {
 
     @RabbitListener(queues = "pagamentos.detalhes-avaliacao")
     public void recebeMensagem(@Payload PagamentoDto pagamento) {
+
+        if (pagamento.getNumero().equals("0000")) {
+            throw new RuntimeException("não consegui processar a mensagem" + pagamento.getId());
+        }
+
         String msg = """
                 Necessário criar registro de avaliação para o pedido: %s
                 Id do pagamento: %s
