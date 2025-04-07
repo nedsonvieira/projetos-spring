@@ -1,10 +1,10 @@
-package br.com.nedson.auth_service.domain.auth.service;
+package br.com.nedson.auth_service.infra.security;
 
+import br.com.nedson.auth_service.domain.auth.entity.RefreshToken;
 import br.com.nedson.auth_service.domain.auth.entity.Usuario;
 import br.com.nedson.auth_service.domain.auth.repository.RefreshTokenRepository;
-import br.com.nedson.auth_service.domain.auth.entity.RefreshToken;
 import br.com.nedson.auth_service.infra.exception.TokenExpiradoException;
-import jakarta.persistence.EntityNotFoundException;
+import br.com.nedson.auth_service.infra.exception.TokenInvalidoException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,8 @@ public class RefreshTokenService {
         String token = UUID.randomUUID().toString();
 
         RefreshToken refreshToken = new RefreshToken(
-                UUID.randomUUID(),
-                usuario,
                 token,
+                usuario,
                 Instant.now().plusSeconds(60 * 60 * 24 * 7)
         );
         repositorio.save(refreshToken);
@@ -35,7 +34,7 @@ public class RefreshTokenService {
 
     public RefreshToken validarRefreshToken(String token) {
         RefreshToken refreshToken = repositorio.findByToken(token)
-                .orElseThrow(() -> new EntityNotFoundException("Erro ao revogar o refresh token: Refresh token inválido ou não encontrado!"));
+                .orElseThrow(() -> new TokenInvalidoException("Erro ao validar: Refresh token inválido ou não encontrado!"));
 
         if (refreshToken.getExpiracao().isBefore(Instant.now())) {
             throw new TokenExpiradoException("Refresh token expirado");
@@ -48,7 +47,7 @@ public class RefreshTokenService {
         repositorio.findByToken(token)
                 .ifPresentOrElse(
                         repositorio::delete,
-                        () -> { throw new EntityNotFoundException("Token inválido ou não encontrado"); }
+                        () -> { throw new TokenInvalidoException("Erro ao revogar: Refresh token inválido ou não encontrado!"); }
                 );
     }
 }

@@ -18,13 +18,20 @@ import java.util.UUID;
 public class RefreshToken {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Usuario usuario;
 
     @Column(unique = true)
     private String token;
 
     private Instant expiracao;
+
+    public RefreshToken(String token, Usuario usuario, Instant expiracao) {
+        this.token = token;
+        this.usuario = usuario;
+        this.expiracao = expiracao;
+    }
 }

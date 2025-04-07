@@ -27,22 +27,29 @@ import java.util.UUID;
 public class Usuario implements UserDetails {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     private String nome;
+
     @Column(unique = true)
     private String email;
+
     private String senha;
+
     @Enumerated(EnumType.STRING)
     private Role role;
+
     private Instant criadoEm;
+
     private Instant atualizadoEm;
+
     private Boolean ativo;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     public Usuario(CadastrarUsuario dto) {
-        this.id = UUID.randomUUID();
         this.nome = dto.nome();
         this.email = dto.email();
 

@@ -54,10 +54,7 @@ public class UsuarioService {
     }
 
     private Usuario verificarEmail(String email){
-        try {
-            return repositorio.findByEmail(email);
-        } catch (EntityNotFoundException ex){
-            throw new EntityNotFoundException("Usuário com o email '" + email + "' não encontrado.");
-        }
+        return repositorio.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado para o email informado."));
     }
 }

@@ -4,6 +4,7 @@ import br.com.nedson.auth_service.domain.auth.service.UsuarioService;
 import br.com.nedson.auth_service.domain.auth.vo.user.AtualizarUsuario;
 import br.com.nedson.auth_service.domain.auth.vo.user.CadastrarUsuario;
 import br.com.nedson.auth_service.domain.auth.vo.user.DetalharUsuario;
+import br.com.nedson.auth_service.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -14,8 +15,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
+    private final TokenService tokenService;
 
     @Operation(
             summary = "Cadastrar novo usuário",
@@ -56,11 +56,10 @@ public class UsuarioController {
     })
     @PutMapping("/atualizar")
     @Secured("ROLE_USER")
-    public ResponseEntity<String> atualizar(@Valid @RequestBody AtualizarUsuario dto) {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-        var userDetails = (UserDetails) authentication.getPrincipal();
-
-        usuarioService.atualizar(userDetails.getUsername(), dto);
+    public ResponseEntity<String> atualizar(@RequestHeader("Authorization") String token, @Valid @RequestBody AtualizarUsuario dto) {
+        String tokenSemBearer = token.replace("Bearer ", "");
+        String email = tokenService.getClaimEmail(tokenSemBearer);
+        usuarioService.atualizar(email, dto);
         return ResponseEntity.ok("Dados atualizados com sucesso!");
     }
 

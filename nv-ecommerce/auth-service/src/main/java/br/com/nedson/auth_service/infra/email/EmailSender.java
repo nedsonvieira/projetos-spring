@@ -1,6 +1,5 @@
 package br.com.nedson.auth_service.infra.email;
 
-import br.com.nedson.auth_service.domain.auth.service.EmailTemplate;
 import br.com.nedson.auth_service.infra.exception.EnviarEmailException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.AllArgsConstructor;

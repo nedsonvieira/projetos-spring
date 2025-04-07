@@ -1,10 +1,13 @@
 package br.com.nedson.auth_service.infra.security;
 
 import br.com.nedson.auth_service.domain.auth.entity.Usuario;
+import br.com.nedson.auth_service.domain.auth.repository.UsuarioRepository;
+import br.com.nedson.auth_service.infra.exception.TokenInvalidoException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,34 +22,53 @@ public class TokenService {
 
     private final String secret;
 
-    public TokenService(@Value("${app.security.jwt.secret}") String secret) {
+    @Autowired
+    private final UsuarioRepository usuarioRepository;
+
+    public TokenService(@Value("${app.security.jwt.secret}") String secret, UsuarioRepository usuarioRepository) {
         this.secret = secret;
+        this.usuarioRepository = usuarioRepository;
     }
 
     public String gerarToken(Usuario usuario) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
+
             return JWT.create()
                     .withIssuer(ISSUER)
-                    .withSubject(usuario.getEmail())
+                    .withSubject(usuario.getId().toString())
+                    .withClaim("email", usuario.getEmail())
                     .withIssuedAt(Instant.now())
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
-        } catch (JWTCreationException exception) {
-            throw new JWTCreationException("Erro ao gerar Token JWT", exception);
+
+        } catch (JWTCreationException ex) {
+            throw new JWTCreationException("Erro ao gerar Token JWT", ex);
         }
     }
 
-    public String getSubject(String tokenJWT) {
+    public Usuario obterUsuario(String token) {
+        return usuarioRepository.findByEmail(getClaimEmail(token))
+                .orElseThrow(() -> new TokenInvalidoException("Usuário não encontrado para o token informado."));
+    }
+
+    public String getClaimEmail(String token) {
+        return validarToken(token).getClaim("email").asString();
+    }
+
+    public String getSubject(String token) {
+        return validarToken(token).getSubject();
+    }
+
+    private DecodedJWT validarToken(String token) {
         try {
             var algoritmo = Algorithm.HMAC256(secret);
             return JWT.require(algoritmo)
                     .withIssuer(ISSUER)
                     .build()
-                    .verify(tokenJWT)
-                    .getSubject();
-        } catch (JWTVerificationException exception) {
-            throw new JWTVerificationException("Token JWT inválido ou expirado: " +tokenJWT);
+                    .verify(token);
+        } catch (RuntimeException ex) {
+            throw new TokenInvalidoException("Token inválido ou expirado!");
         }
     }
 

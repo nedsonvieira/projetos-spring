@@ -1,4 +1,4 @@
-package br.com.nedson.auth_service.domain.auth.service;
+package br.com.nedson.auth_service.infra.email;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;

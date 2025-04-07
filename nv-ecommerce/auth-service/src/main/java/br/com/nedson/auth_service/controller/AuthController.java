@@ -1,9 +1,9 @@
 package br.com.nedson.auth_service.controller;
 
-import br.com.nedson.auth_service.domain.auth.service.RefreshTokenService;
-import br.com.nedson.auth_service.domain.auth.vo.token.RefreshRequest;
 import br.com.nedson.auth_service.domain.auth.entity.RefreshToken;
+import br.com.nedson.auth_service.domain.auth.vo.token.RefreshRequest;
 import br.com.nedson.auth_service.domain.auth.vo.token.TokenResponse;
+import br.com.nedson.auth_service.infra.security.RefreshTokenService;
 import br.com.nedson.auth_service.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +26,7 @@ public class AuthController {
 
     @Operation(
             summary = "Validar token JWT",
-            description = "Valida o token JWT recebido no cabeçalho 'Authorization' e retorna o subject (e-mail do usuário) associado ao token.",
+            description = "Valida o token JWT recebido no cabeçalho 'Authorization' e retorna o claim (e-mail do usuário) associado ao token.",
             security = @SecurityRequirement(name = "bearer-key")
     )
     @ApiResponses({
@@ -36,10 +36,10 @@ public class AuthController {
     })
     @GetMapping("/validar-token")
     public ResponseEntity<String> validarToken(@RequestHeader("Authorization") String token) {
-        String tokenSemBearer = token.replace("Bearer ", ""); // Remove prefixo "Bearer"
-        String subject = tokenService.getSubject(tokenSemBearer); // Valida e obtém o subject do token
+        String tokenSemBearer = token.replace("Bearer ", "");
+        String email = tokenService.getClaimEmail(tokenSemBearer);
 
-        return ResponseEntity.ok("Token válido! Usuário: " + subject);
+        return ResponseEntity.ok("Token válido! Usuário: " + email);
     }
 
     @Operation(
@@ -64,17 +64,17 @@ public class AuthController {
         refreshTokenService.revogarRefreshToken(refreshToken);
 
         // Gera novos tokens
-        String newAccessToken = tokenService.gerarToken(tokenValido.getUsuario());
-        String newRefreshToken = refreshTokenService.gerarRefreshToken(tokenValido.getUsuario());
+        String novoAccessToken = tokenService.gerarToken(tokenValido.getUsuario());
+        String novoRefreshToken = refreshTokenService.gerarRefreshToken(tokenValido.getUsuario());
 
-        long accessExpiresIn = 30 * 60; // 15 minutos
-        long refreshExpiresIn = 7 * 24 * 60 * 60; // 7 dias
+        long accessExpiraEm = 30 * 60; // 30 minutos
+        long refreshExpiraEm = 7 * 24 * 60 * 60; // 7 dias
 
         return ResponseEntity.ok(new TokenResponse(
-                newAccessToken,
-                newRefreshToken,
-                accessExpiresIn,
-                refreshExpiresIn
+                novoAccessToken,
+                novoRefreshToken,
+                accessExpiraEm,
+                refreshExpiraEm
         ));
     }
 
