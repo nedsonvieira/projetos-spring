@@ -68,8 +68,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(TokenInvalidoException.class)
     public ResponseEntity<ApiErrorResponse> handleInvalidToken(TokenInvalidoException ex) {
-        logger.warn("Erro 401 capturado - Token inválido: {}", ex.getMessage());
-        return createResponse(HttpStatus.UNAUTHORIZED, "Token inválido: " + ex.getMessage());
+        logger.warn("Erro 400 capturado - Token inválido: {}", ex.getMessage());
+        return createResponse(HttpStatus.BAD_REQUEST, "Token inválido: " + ex.getMessage());
     }
 
     @ExceptionHandler(TokenExpiradoException.class)

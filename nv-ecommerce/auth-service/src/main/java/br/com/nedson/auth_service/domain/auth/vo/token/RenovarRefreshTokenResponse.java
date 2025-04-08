@@ -1,6 +1,6 @@
 package br.com.nedson.auth_service.domain.auth.vo.token;
 
-public record TokenResponse(
+public record RenovarRefreshTokenResponse(
         String accessToken,
         String refreshToken,
         long accessTokenExpiraEm,

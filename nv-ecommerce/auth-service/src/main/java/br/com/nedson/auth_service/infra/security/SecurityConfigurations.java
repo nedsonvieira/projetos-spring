@@ -43,10 +43,10 @@ public class SecurityConfigurations {
                 })
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                            response.setContentType("application/json");
+                            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                             response.setCharacterEncoding("UTF-8");
-                            response.getWriter().write("Erro ao validar: Token inválido ou expirado!");
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"error\": \"Falha na autenticação\"}");
                         })
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

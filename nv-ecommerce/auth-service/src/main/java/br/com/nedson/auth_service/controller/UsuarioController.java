@@ -1,9 +1,10 @@
 package br.com.nedson.auth_service.controller;
 
+import br.com.nedson.auth_service.domain.auth.entity.Usuario;
 import br.com.nedson.auth_service.domain.auth.service.UsuarioService;
 import br.com.nedson.auth_service.domain.auth.vo.user.AtualizarUsuario;
 import br.com.nedson.auth_service.domain.auth.vo.user.CadastrarUsuario;
-import br.com.nedson.auth_service.domain.auth.vo.user.DetalharUsuario;
+import br.com.nedson.auth_service.domain.auth.vo.user.DadosUsuarioResponse;
 import br.com.nedson.auth_service.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,7 +15,8 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,7 +30,8 @@ public class UsuarioController {
 
     @Operation(
             summary = "Cadastrar novo usuário",
-            description = "Endpoint público para cadastro de novos usuários no sistema."
+            description = "Endpoint público para cadastro de novos usuários no sistema.",
+            security = @SecurityRequirement(name = "bearer-key")
     )
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Usuário cadastrado com sucesso"),
@@ -55,11 +58,9 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @PutMapping("/atualizar")
-    @Secured("ROLE_USER")
-    public ResponseEntity<String> atualizar(@RequestHeader("Authorization") String token, @Valid @RequestBody AtualizarUsuario dto) {
-        String tokenSemBearer = token.replace("Bearer ", "");
-        String email = tokenService.getClaimEmail(tokenSemBearer);
-        usuarioService.atualizar(email, dto);
+    @PreAuthorize("hasRole('ADMIN', 'GESTOR', 'CLIENTE')")
+    public ResponseEntity<String> atualizar(@AuthenticationPrincipal Usuario usuario, @Valid @RequestBody AtualizarUsuario dto) {
+        usuarioService.atualizar(usuario.getId(), dto);
         return ResponseEntity.ok("Dados atualizados com sucesso!");
     }
 
@@ -76,9 +77,9 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @GetMapping("/buscar/{email}")
-    @Secured("ROLE_ADMIN")
-    public ResponseEntity<DetalharUsuario> listarById(@PathVariable String email) {
-        return ResponseEntity.ok().body(new DetalharUsuario(usuarioService.findByEmail(email)));
+    @PreAuthorize("hasRole('ADMIN', 'GESTOR')")
+    public ResponseEntity<DadosUsuarioResponse> listarById(@PathVariable String email) {
+        return ResponseEntity.ok().body(new DadosUsuarioResponse(usuarioService.findByEmail(email)));
     }
 
     @Operation(
@@ -94,7 +95,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @DeleteMapping("/inativar/{email}")
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> inativar(@PathVariable String email) {
         usuarioService.inativar(email);
         return ResponseEntity.noContent().build();

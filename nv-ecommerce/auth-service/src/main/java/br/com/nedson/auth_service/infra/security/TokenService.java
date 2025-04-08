@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Service
 public class TokenService {
@@ -38,6 +39,7 @@ public class TokenService {
                     .withIssuer(ISSUER)
                     .withSubject(usuario.getId().toString())
                     .withClaim("email", usuario.getEmail())
+                    .withClaim("role", usuario.getRole().name())
                     .withIssuedAt(Instant.now())
                     .withExpiresAt(dataExpiracao())
                     .sign(algoritmo);
@@ -48,16 +50,16 @@ public class TokenService {
     }
 
     public Usuario obterUsuario(String token) {
-        return usuarioRepository.findByEmail(getClaimEmail(token))
-                .orElseThrow(() -> new TokenInvalidoException("Usuário não encontrado para o token informado."));
+        return usuarioRepository.findById(getSubject(token))
+                .orElseThrow(() -> new TokenInvalidoException("Token inválido ou expirado!"));
     }
 
-    public String getClaimEmail(String token) {
-        return validarToken(token).getClaim("email").asString();
+    public UUID getSubject(String token) {
+        return UUID.fromString(validarToken(token).getSubject());
     }
 
-    public String getSubject(String token) {
-        return validarToken(token).getSubject();
+    public boolean isExpirado(String token){
+        return validarToken(token).getExpiresAtAsInstant().isAfter((Instant.now()));
     }
 
     private DecodedJWT validarToken(String token) {

@@ -29,9 +29,9 @@ public class RefreshToken {
 
     private Instant expiracao;
 
-    public RefreshToken(String token, Usuario usuario, Instant expiracao) {
-        this.token = token;
+    public RefreshToken(Usuario usuario) {
+        this.token = UUID.randomUUID().toString();
         this.usuario = usuario;
-        this.expiracao = expiracao;
+        this.expiracao = Instant.now().plusSeconds(60 * 60 * 24 * 7); // 7 dias
     }
 }

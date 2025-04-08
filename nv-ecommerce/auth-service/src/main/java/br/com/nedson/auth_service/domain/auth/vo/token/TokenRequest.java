@@ -1,4 +1,6 @@
 package br.com.nedson.auth_service.domain.auth.vo.token;
 
-public record RefreshRequest(String refreshToken) {
+public record TokenRequest(
+        String token
+) {
 }

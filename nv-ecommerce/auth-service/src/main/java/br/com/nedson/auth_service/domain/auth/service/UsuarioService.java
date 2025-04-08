@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @AllArgsConstructor
 public class UsuarioService {
@@ -38,8 +40,8 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void atualizar(String email, AtualizarUsuario dto) {
-        Usuario usuario = verificarEmail(email);
+    public void atualizar(UUID id, AtualizarUsuario dto) {
+        Usuario usuario = repositorio.getReferenceById(id);
         usuario.atualizar(dto);
     }
 

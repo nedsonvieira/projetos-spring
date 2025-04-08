@@ -20,16 +20,12 @@ public class RefreshTokenService {
 
     @Transactional
     public String gerarRefreshToken(Usuario usuario) {
-        String token = UUID.randomUUID().toString();
+        repositorio.deleteAllByUsuarioId(usuario.getId());
 
-        RefreshToken refreshToken = new RefreshToken(
-                token,
-                usuario,
-                Instant.now().plusSeconds(60 * 60 * 24 * 7)
-        );
+        RefreshToken refreshToken = new RefreshToken(usuario);
         repositorio.save(refreshToken);
 
-        return token;
+        return refreshToken.getToken();
     }
 
     public RefreshToken validarRefreshToken(String token) {
@@ -37,17 +33,18 @@ public class RefreshTokenService {
                 .orElseThrow(() -> new TokenInvalidoException("Erro ao validar: Refresh token inválido ou não encontrado!"));
 
         if (refreshToken.getExpiracao().isBefore(Instant.now())) {
-            throw new TokenExpiradoException("Refresh token expirado");
+            throw new TokenExpiradoException("Refresh token expirado!");
         }
         return refreshToken;
     }
 
     @Transactional
-    public void revogarRefreshToken(String token) {
-        repositorio.findByToken(token)
-                .ifPresentOrElse(
-                        repositorio::delete,
-                        () -> { throw new TokenInvalidoException("Erro ao revogar: Refresh token inválido ou não encontrado!"); }
-                );
+    public void revogarRefreshToken(UUID id, String token) {
+        repositorio.deleteByIdAndToken(id, token);
+    }
+
+    @Transactional
+    public int revogarTodosRefreshToken(UUID id) {
+        return repositorio.deleteAllByUsuarioId(id);
     }
 }

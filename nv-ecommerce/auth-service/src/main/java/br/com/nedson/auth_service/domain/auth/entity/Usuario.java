@@ -54,7 +54,7 @@ public class Usuario implements UserDetails {
         this.email = dto.email();
 
         this.criadoEm = Instant.now();
-        this.role = Role.ROLE_USER;
+        this.role = Role.CLIENTE;
         this.ativo = true;
     }
 
@@ -78,7 +78,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
 
     @Override
