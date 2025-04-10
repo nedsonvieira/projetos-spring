@@ -1,10 +1,10 @@
 package br.com.nedson.auth_service.controller;
 
-import br.com.nedson.auth_service.domain.auth.entity.RefreshToken;
-import br.com.nedson.auth_service.domain.auth.entity.Usuario;
-import br.com.nedson.auth_service.domain.auth.vo.Role;
-import br.com.nedson.auth_service.domain.auth.vo.token.RefreshTokenRequest;
-import br.com.nedson.auth_service.domain.auth.vo.token.TokenRequest;
+import br.com.nedson.auth_service.domain.entity.RefreshToken;
+import br.com.nedson.auth_service.domain.entity.Usuario;
+import br.com.nedson.auth_service.domain.vo.user.Role;
+import br.com.nedson.auth_service.domain.vo.token.RefreshTokenRequest;
+import br.com.nedson.auth_service.domain.vo.token.TokenRequest;
 import br.com.nedson.auth_service.infra.exception.TokenExpiradoException;
 import br.com.nedson.auth_service.infra.exception.TokenInvalidoException;
 import br.com.nedson.auth_service.infra.security.RefreshTokenService;

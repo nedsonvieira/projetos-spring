@@ -1,11 +1,11 @@
 package br.com.nedson.auth_service.controller;
 
-import br.com.nedson.auth_service.domain.auth.entity.RefreshToken;
-import br.com.nedson.auth_service.domain.auth.entity.Usuario;
-import br.com.nedson.auth_service.domain.auth.vo.token.RefreshTokenRequest;
-import br.com.nedson.auth_service.domain.auth.vo.token.RenovarRefreshTokenResponse;
-import br.com.nedson.auth_service.domain.auth.vo.token.TokenIntrospectResponse;
-import br.com.nedson.auth_service.domain.auth.vo.token.TokenRequest;
+import br.com.nedson.auth_service.domain.entity.RefreshToken;
+import br.com.nedson.auth_service.domain.entity.Usuario;
+import br.com.nedson.auth_service.domain.vo.token.RefreshTokenRequest;
+import br.com.nedson.auth_service.domain.vo.token.RenovarRefreshTokenResponse;
+import br.com.nedson.auth_service.domain.vo.token.TokenIntrospectResponse;
+import br.com.nedson.auth_service.domain.vo.token.TokenRequest;
 import br.com.nedson.auth_service.infra.security.RefreshTokenService;
 import br.com.nedson.auth_service.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +40,7 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @GetMapping("/introspect")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<TokenIntrospectResponse> validarToken(@RequestBody TokenRequest tokenRequest) {
         Usuario usuario = tokenService.obterUsuario(tokenRequest.token());
 
@@ -65,7 +65,7 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @PostMapping("/renovar-token")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'CLIENTE')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_CLIENTE')")
     public ResponseEntity<RenovarRefreshTokenResponse> renovarTokens(@AuthenticationPrincipal Usuario usuario, @RequestBody RefreshTokenRequest request) {
         String refreshToken = request.refreshToken();
 
@@ -103,7 +103,7 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @DeleteMapping("/revogar-token")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'CLIENTE')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_CLIENTE')")
     public ResponseEntity<String> revogarTodosToken(@AuthenticationPrincipal Usuario usuario, @RequestBody RefreshTokenRequest request) {
         refreshTokenService.revogarRefreshToken(usuario.getId(), request.refreshToken());
         return ResponseEntity.ok("Refresh token revogado com sucesso.");
@@ -122,7 +122,7 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @DeleteMapping("/revogar-todos")
-    @PreAuthorize("hasAnyRole('ADMIN', 'GESTOR', 'CLIENTE')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_CLIENTE')")
     public ResponseEntity<String> revogarToken(@AuthenticationPrincipal Usuario usuario) {
         int tokensRevogados = refreshTokenService.revogarTodosRefreshToken(usuario.getId());
 

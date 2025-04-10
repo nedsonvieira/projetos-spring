@@ -104,7 +104,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiErrorResponse> handleAccessDenied() {
         logger.warn("Erro 403 capturado - Acesso negado.");
-        return createResponse(HttpStatus.FORBIDDEN, "Acesso negado.");
+        return createResponse(HttpStatus.FORBIDDEN, "Acesso negado - Role insuficiente");
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiErrorResponse> handleIllegalArgument() {
+        logger.warn("Erro 401 capturado - Erro na validação do token.");
+        return createResponse(HttpStatus.UNAUTHORIZED, "O token fornecido é inválido ou expirado. Verifique suas credenciais.");
     }
 
     @ExceptionHandler(Exception.class)

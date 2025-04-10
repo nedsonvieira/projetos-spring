@@ -1,7 +1,7 @@
 package br.com.nedson.auth_service.infra.security;
 
-import br.com.nedson.auth_service.domain.auth.entity.Usuario;
-import br.com.nedson.auth_service.domain.auth.repository.UsuarioRepository;
+import br.com.nedson.auth_service.domain.entity.Usuario;
+import br.com.nedson.auth_service.domain.repository.UsuarioRepository;
 import br.com.nedson.auth_service.infra.exception.TokenInvalidoException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

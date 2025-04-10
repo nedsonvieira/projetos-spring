@@ -1,8 +1,8 @@
 package br.com.nedson.auth_service.infra.security;
 
-import br.com.nedson.auth_service.domain.auth.entity.RefreshToken;
-import br.com.nedson.auth_service.domain.auth.entity.Usuario;
-import br.com.nedson.auth_service.domain.auth.repository.RefreshTokenRepository;
+import br.com.nedson.auth_service.domain.entity.RefreshToken;
+import br.com.nedson.auth_service.domain.entity.Usuario;
+import br.com.nedson.auth_service.domain.repository.RefreshTokenRepository;
 import br.com.nedson.auth_service.infra.exception.TokenExpiradoException;
 import br.com.nedson.auth_service.infra.exception.TokenInvalidoException;
 import jakarta.transaction.Transactional;

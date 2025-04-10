@@ -1,9 +1,9 @@
 package br.com.nedson.auth_service.controller;
 
-import br.com.nedson.auth_service.domain.auth.entity.Usuario;
-import br.com.nedson.auth_service.domain.auth.vo.token.LoginResponse;
-import br.com.nedson.auth_service.domain.auth.vo.user.DadosUsuarioResponse;
-import br.com.nedson.auth_service.domain.auth.vo.user.LoginRequest;
+import br.com.nedson.auth_service.domain.entity.Usuario;
+import br.com.nedson.auth_service.domain.vo.token.LoginResponse;
+import br.com.nedson.auth_service.domain.vo.user.DadosUsuarioResponse;
+import br.com.nedson.auth_service.domain.vo.user.LoginRequest;
 import br.com.nedson.auth_service.infra.security.RefreshTokenService;
 import br.com.nedson.auth_service.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.tags.Tag;

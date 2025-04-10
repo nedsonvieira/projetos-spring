@@ -1,10 +1,10 @@
 package br.com.nedson.auth_service.controller;
 
-import br.com.nedson.auth_service.domain.auth.entity.Usuario;
-import br.com.nedson.auth_service.domain.auth.service.UsuarioService;
-import br.com.nedson.auth_service.domain.auth.vo.user.AtualizarUsuario;
-import br.com.nedson.auth_service.domain.auth.vo.user.CadastrarUsuario;
-import br.com.nedson.auth_service.domain.auth.vo.user.DadosUsuarioResponse;
+import br.com.nedson.auth_service.domain.entity.Usuario;
+import br.com.nedson.auth_service.domain.service.UsuarioService;
+import br.com.nedson.auth_service.domain.vo.user.AtualizarUsuario;
+import br.com.nedson.auth_service.domain.vo.user.CadastrarUsuario;
+import br.com.nedson.auth_service.domain.vo.user.DadosUsuarioResponse;
 import br.com.nedson.auth_service.infra.security.TokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -58,7 +59,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @PutMapping("/atualizar")
-    @PreAuthorize("hasRole('ADMIN', 'GESTOR', 'CLIENTE')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GESTOR', 'ROLE_CLIENTE')")
     public ResponseEntity<String> atualizar(@AuthenticationPrincipal Usuario usuario, @Valid @RequestBody AtualizarUsuario dto) {
         usuarioService.atualizar(usuario.getId(), dto);
         return ResponseEntity.ok("Dados atualizados com sucesso!");
@@ -77,9 +78,13 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @GetMapping("/buscar/{email}")
-    @PreAuthorize("hasRole('ADMIN', 'GESTOR')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_GESTOR')")
     public ResponseEntity<DadosUsuarioResponse> listarById(@PathVariable String email) {
-        return ResponseEntity.ok().body(new DadosUsuarioResponse(usuarioService.findByEmail(email)));
+        try {
+            return ResponseEntity.ok().body(new DadosUsuarioResponse(usuarioService.findByEmail(email)));
+        } catch (IllegalArgumentException ex) {
+            throw new AccessDeniedException(ex.getMessage());
+        }
     }
 
     @Operation(
@@ -95,7 +100,7 @@ public class UsuarioController {
             @ApiResponse(responseCode = "500", description = "Erro no servidor")
     })
     @DeleteMapping("/inativar/{email}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Void> inativar(@PathVariable String email) {
         usuarioService.inativar(email);
         return ResponseEntity.noContent().build();
