@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,5 +63,15 @@ public class GlobalExceptionHandler {
         errors.put("message", "Categoria não encontrada");
         errors.put("erro", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(ParametroInvalidoException.class)
+    public ResponseEntity<Map<String, String>> handleCategoriaNaoEncontradaException(
+            ParametroInvalidoException ex) {
+        log.warn("Parâmetro inválido {}", ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+        errors.put("message", "Parâmetro inválido");
+        errors.put("erro", ex.getMessage());
+        return ResponseEntity.badRequest().body(errors);
     }
 }

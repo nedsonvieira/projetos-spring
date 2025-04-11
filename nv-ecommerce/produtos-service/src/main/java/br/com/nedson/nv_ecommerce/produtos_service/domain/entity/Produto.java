@@ -2,19 +2,16 @@ package br.com.nedson.nv_ecommerce.produtos_service.domain.entity;
 
 import br.com.nedson.nv_ecommerce.produtos_service.domain.Categoria;
 import br.com.nedson.nv_ecommerce.produtos_service.domain.dto.ProdutoAtualizarRequestDto;
-import br.com.nedson.nv_ecommerce.produtos_service.infra.exception.ProdutoSemEstoqueException;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 @Entity
 @Table(name = "produtos")
 @EqualsAndHashCode(of = "id")
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
